@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(composer install:*)",
+      "Bash(php -l /c/Users/admin/code/laravel/trainer/app/Models/User.php)",
+      "Bash(php -l /c/Users/admin/code/laravel/trainer/app/Models/Exercise.php)",
+      "Bash(php -l /c/Users/admin/code/laravel/trainer/app/Models/WorkoutPlan.php)",
+      "Bash(php -l /c/Users/admin/code/laravel/trainer/app/Models/WorkoutPlanExercise.php)",
+      "Bash(php -l /c/Users/admin/code/laravel/trainer/app/Models/Assignment.php)",
+      "Read(//c/Users/admin/.claude/projects/c--Users-admin-code-laravel-trainer/**)",
+      "Read(//c/Users/admin/.claude/projects/c--Users-admin-code-laravel-trainer/memory/**)",
+      "Bash(xargs grep:*)"
+    ]
+  }
+}
