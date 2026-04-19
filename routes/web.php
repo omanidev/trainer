@@ -14,6 +14,7 @@ Route::middleware(['auth', 'verified'])->get('dashboard', function () {
 // Trainer routes
 Route::middleware(['auth', 'verified', 'trainer'])->prefix('trainer')->name('trainer.')->group(function () {
     Route::livewire('dashboard', 'pages::trainer.dashboard')->name('dashboard');
+    Route::livewire('calendar', 'pages::trainer.calendar')->name('calendar');
     Route::livewire('clients', 'pages::trainer.clients')->name('clients');
     Route::livewire('clients/{id}', 'pages::trainer.client-detail')->name('client-detail');
     Route::livewire('exercises', 'pages::trainer.exercises')->name('exercises');
@@ -25,6 +26,7 @@ Route::middleware(['auth', 'verified', 'trainer'])->prefix('trainer')->name('tra
 Route::middleware(['auth', 'verified', 'client'])->prefix('client')->name('client.')->group(function () {
     Route::livewire('dashboard', 'pages::client.dashboard')->name('dashboard');
     Route::livewire('history', 'pages::client.history')->name('history');
+    Route::livewire('progress', 'pages::client.progress')->name('progress');
 });
 
 require __DIR__.'/settings.php';

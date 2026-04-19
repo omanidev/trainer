@@ -85,7 +85,7 @@ new #[Layout('layouts.app')] #[Title('Exercise Library')] class extends Componen
         if ($this->videoMode === 'url') {
             $rules['videoUrl'] = 'nullable|url|max:500';
         } else {
-            $rules['uploadedVideo'] = 'nullable|file|mimetypes:video/mp4,video/webm,video/ogg,video/quicktime|max:2048';
+            $rules['uploadedVideo'] = 'nullable|file|mimetypes:video/mp4,video/webm,video/ogg,video/quicktime|max:20480';
         }
 
         $this->validate($rules);
@@ -313,6 +313,9 @@ new #[Layout('layouts.app')] #[Title('Exercise Library')] class extends Componen
             <div class="flex flex-col gap-3">
                 <div class="flex items-center justify-between">
                     <flux:label>{{ __('Video (optional)') }}</flux:label>
+                    @error('uploadedVideo')
+                        <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span>
+                    @enderror
                     {{-- Mode toggle --}}
                     <div class="flex rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden text-xs">
                         <button type="button" wire:click="$set('videoMode', 'url')"
@@ -334,8 +337,11 @@ new #[Layout('layouts.app')] #[Title('Exercise Library')] class extends Componen
                     <flux:input wire:model="videoUrl"
                         :placeholder="__('https://youtube.com/watch?v=… or any video URL')"
                         icon="link" />
+                    @error('videoUrl')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
                     @if ($videoUrl && str_contains($videoUrl, 'youtu'))
-                        <p class="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                        <p class="text-xs text-green-600 dark:text-green-400 flex items-center gap-1 mt-1">
                             <flux:icon name="check-circle" class="size-3.5" /> {{ __('YouTube link detected — thumbnail will be shown automatically.') }}
                         </p>
                     @endif
@@ -360,12 +366,65 @@ new #[Layout('layouts.app')] #[Title('Exercise Library')] class extends Componen
                         @endif
                     @endif
 
-                    <div>
-                        <input type="file" wire:model="uploadedVideo" accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                    <div x-data="{
+                        fileSize: null,
+                        fileName: null,
+                        maxSize: 20 * 1024 * 1024,
+                        formatSize(bytes) {
+                            if (!bytes) return '';
+                            const mb = (bytes / 1024 / 1024).toFixed(2);
+                            return mb + ' MB';
+                        },
+                        checkFile(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                this.fileSize = file.size;
+                                this.fileName = file.name;
+                            } else {
+                                this.fileSize = null;
+                                this.fileName = null;
+                            }
+                        }
+                    }">
+                        <input type="file"
+                            wire:model="uploadedVideo"
+                            accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                            @change="checkFile($event)"
                             class="block w-full text-sm text-zinc-500 file:mr-3 file:rounded-lg file:border-0
                                    file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm file:font-medium
                                    dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:text-zinc-400" />
-                        <p class="text-xs text-zinc-400 mt-1">{{ __('MP4, WebM or MOV · max 2 MB') }}</p>
+
+                        {{-- File info & warnings --}}
+                        <div class="mt-2 space-y-1">
+                            <p class="text-xs text-zinc-400">{{ __('MP4, WebM or MOV · max 20 MB') }}</p>
+
+                            <template x-if="fileName">
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="text-zinc-600 dark:text-zinc-400" x-text="fileName"></span>
+                                    <span class="font-medium"
+                                        :class="fileSize > maxSize ? 'text-red-600 dark:text-red-400' : 'text-zinc-600 dark:text-zinc-400'"
+                                        x-text="formatSize(fileSize)"></span>
+                                </div>
+                            </template>
+
+                            <template x-if="fileSize && fileSize > maxSize">
+                                <div class="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 px-2 py-1.5 rounded-lg">
+                                    <flux:icon name="exclamation-triangle" class="size-3.5" />
+                                    <span>{{ __('File is too large. Maximum size is 20 MB.') }}</span>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Upload progress --}}
+                        <div wire:loading wire:target="uploadedVideo" class="mt-2">
+                            <div class="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
+                                <svg class="animate-spin size-3.5" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>{{ __('Uploading video...') }}</span>
+                            </div>
+                        </div>
                     </div>
                 @endif
             </div>

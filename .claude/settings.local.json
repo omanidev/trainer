@@ -10,7 +10,20 @@
       "Bash(php -l /c/Users/admin/code/laravel/trainer/app/Models/Assignment.php)",
       "Read(//c/Users/admin/.claude/projects/c--Users-admin-code-laravel-trainer/**)",
       "Read(//c/Users/admin/.claude/projects/c--Users-admin-code-laravel-trainer/memory/**)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(composer check-platform-reqs:*)",
+      "Bash(mysql:*)",
+      "Bash(npm run build:*)",
+      "Bash(herd link:*)",
+      "Bash(herd restart:*)",
+      "Bash(herd status:*)",
+      "Bash(ping:*)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(php -i:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(php:*)"
     ]
   }
 }

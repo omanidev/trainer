@@ -17,6 +17,9 @@
                             <flux:sidebar.item icon="home" :href="route('trainer.dashboard')" :current="request()->routeIs('trainer.dashboard')" wire:navigate>
                                 {{ __('Dashboard') }}
                             </flux:sidebar.item>
+                            <flux:sidebar.item icon="calendar" :href="route('trainer.calendar')" :current="request()->routeIs('trainer.calendar')" wire:navigate>
+                                {{ __('Calendar') }}
+                            </flux:sidebar.item>
                             <flux:sidebar.item icon="users" :href="route('trainer.clients')" :current="request()->routeIs('trainer.clients')" wire:navigate>
                                 {{ __('Clients') }}
                             </flux:sidebar.item>
@@ -35,8 +38,11 @@
                             <flux:sidebar.item icon="home" :href="route('client.dashboard')" :current="request()->routeIs('client.dashboard')" wire:navigate>
                                 {{ __("Today's Workout") }}
                             </flux:sidebar.item>
-                            <flux:sidebar.item icon="chart-bar" :href="route('client.history')" :current="request()->routeIs('client.history')" wire:navigate>
-                                {{ __('My Progress') }}
+                            <flux:sidebar.item icon="chart-bar" :href="route('client.progress')" :current="request()->routeIs('client.progress')" wire:navigate>
+                                {{ __('Progress') }}
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="clock" :href="route('client.history')" :current="request()->routeIs('client.history')" wire:navigate>
+                                {{ __('History') }}
                             </flux:sidebar.item>
                         </flux:sidebar.group>
                     @endif

@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'trainer_id'])]
+#[Fillable(['name', 'email', 'password', 'role', 'trainer_id', 'goal', 'target_weight', 'target_weight_unit'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -24,6 +24,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'target_weight' => 'decimal:2',
         ];
     }
 
@@ -67,6 +68,11 @@ class User extends Authenticatable
     public function exerciseLogs()
     {
         return $this->hasMany(ExerciseLog::class, 'client_id');
+    }
+
+    public function bodyWeightLogs()
+    {
+        return $this->hasMany(BodyWeightLog::class, 'client_id');
     }
 
     public function initials(): string

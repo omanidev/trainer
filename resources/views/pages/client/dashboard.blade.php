@@ -161,19 +161,19 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
                             $completed = $log && $log->completed_at;
                             $exercise  = $item->exercise;
                             $images    = $exercise->media->where('type', 'image');
-                            $video     = $exercise->media->where('type', 'video_url')->first();
+                            $video     = $exercise->media->whereIn('type', ['video_url', 'video'])->first();
                             $hasMedia  = $images->isNotEmpty() || $video;
                         @endphp
 
-                        <div x-data="{ showVideo: false, showImages: false }"
+                        <div x-data="{ showImages: false, playing: false }"
                             class="flex flex-col {{ $completed ? 'bg-green-50/60 dark:bg-green-950/20' : '' }} transition-colors">
 
                             {{-- Main exercise row --}}
-                            <div class="flex items-center gap-3 px-5 py-3.5">
+                            <div class="flex items-start gap-3 px-5 py-3.5">
 
                                 {{-- Complete button --}}
                                 <button wire:click="complete({{ $assignment->id }}, {{ $item->id }})"
-                                    class="shrink-0 size-7 rounded-full flex items-center justify-center transition-all
+                                    class="shrink-0 size-7 rounded-full flex items-center justify-center transition-all mt-0.5
                                            {{ $completed
                                                ? 'bg-green-500 shadow-sm shadow-green-300 dark:shadow-green-900 scale-110'
                                                : 'border-2 border-zinc-300 dark:border-zinc-600 hover:border-zinc-400' }}"
@@ -184,6 +184,31 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
                                         </svg>
                                     @endif
                                 </button>
+
+                                {{-- Video thumbnail (always visible if available) --}}
+                                @if ($video)
+                                    <button @click="playing = !playing"
+                                        class="relative shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-zinc-900 group/thumb shadow-sm">
+                                        @if ($video->thumbnailUrl())
+                                            <img src="{{ $video->thumbnailUrl() }}" alt="{{ $exercise->name }}"
+                                                class="w-full h-full object-cover transition duration-300 group-hover/thumb:scale-105" />
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center bg-zinc-800">
+                                                <flux:icon name="film" class="size-8 text-zinc-600" />
+                                            </div>
+                                        @endif
+                                        {{-- Play overlay --}}
+                                        <div class="absolute inset-0 bg-black/10 group-hover/thumb:bg-black/30 transition"></div>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="size-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center
+                                                        group-hover/thumb:scale-110 group-hover/thumb:bg-black/70 transition">
+                                                <svg class="size-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M8 5v14l11-7z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </button>
+                                @endif
 
                                 {{-- Exercise details --}}
                                 <div class="flex-1 min-w-0">
@@ -205,52 +230,42 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
                                     @if ($item->notes)
                                         <p class="text-xs text-zinc-500 mt-0.5">{{ $item->notes }}</p>
                                     @endif
-                                </div>
 
-                                {{-- Media action buttons --}}
-                                <div class="flex items-center gap-1.5 shrink-0">
-                                    @if ($video)
-                                        <button @click="showVideo = !showVideo"
-                                            :class="showVideo
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900'"
-                                            class="flex items-center gap-1 text-xs font-medium rounded-lg px-2.5 py-1.5 transition">
-                                            <flux:icon name="play-circle" class="size-4" />
-                                            <span x-text="showVideo ? 'Hide' : 'Video'"></span>
-                                        </button>
-                                    @endif
+                                    {{-- Images button --}}
                                     @if ($images->isNotEmpty())
                                         <button @click="showImages = !showImages"
-                                            :class="showImages
-                                                ? 'bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-900'
-                                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'"
-                                            class="flex items-center gap-1 text-xs font-medium rounded-lg px-2.5 py-1.5 transition">
-                                            <flux:icon name="photo" class="size-4" />
-                                            {{ $images->count() }}
+                                            class="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1 mt-1.5 transition
+                                                   {{ showImages
+                                                       ? 'bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-900'
+                                                       : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700' }}">
+                                            <flux:icon name="photo" class="size-3.5" />
+                                            <span>{{ $images->count() }} {{ $images->count() === 1 ? __('image') : __('images') }}</span>
                                         </button>
                                     @endif
                                 </div>
                             </div>
 
-                            {{-- Inline video player --}}
+                            {{-- Full-screen video player (when playing) --}}
                             @if ($video)
-                                <div x-show="showVideo" x-cloak class="px-5 pb-4">
-                                    <template x-if="showVideo">
-                                        <div>
-                                            @if ($video->isYoutube())
-                                                <div class="relative w-full rounded-xl overflow-hidden bg-black" style="padding-top:56.25%">
-                                                    <iframe src="{{ $video->playUrl() }}"
-                                                        class="absolute inset-0 w-full h-full"
-                                                        frameborder="0"
-                                                        allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                        allowfullscreen></iframe>
-                                                </div>
-                                            @else
-                                                <video src="{{ $video->playUrl() }}" controls autoplay
-                                                    class="w-full rounded-xl bg-black max-h-72"></video>
-                                            @endif
-                                        </div>
-                                    </template>
+                                <div x-show="playing" x-cloak class="px-5 pb-4">
+                                    <div class="relative w-full rounded-xl overflow-hidden bg-black">
+                                        @if ($video->isYoutube())
+                                            <div class="relative w-full bg-black" style="padding-top:56.25%">
+                                                <iframe src="{{ $video->playUrl() }}"
+                                                    class="absolute inset-0 w-full h-full"
+                                                    frameborder="0"
+                                                    allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowfullscreen></iframe>
+                                            </div>
+                                        @else
+                                            <video src="{{ $video->playUrl() }}" controls autoplay
+                                                class="w-full rounded-xl bg-black max-h-96"></video>
+                                        @endif
+                                        {{-- Close button --}}
+                                        <button @click="playing = false"
+                                            class="absolute top-2 right-2 size-8 rounded-full bg-black/60 text-white flex items-center justify-center text-lg hover:bg-black/80 transition z-10"
+                                            title="{{ __('Close video') }}">×</button>
+                                    </div>
                                 </div>
                             @endif
 
