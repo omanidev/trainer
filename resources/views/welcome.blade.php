@@ -4,20 +4,38 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TrainTrack — Personal Training, Simplified</title>
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
     @if(app()->getLocale() === 'ar')
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-        html[dir="rtl"] body { font-family: 'Tajawal', sans-serif; }
+        html[dir="rtl"] body { font-family: 'Cairo', sans-serif !important; }
     </style>
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        // Theme management - must run before page renders to prevent flash
+        (function() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 </head>
-<body class="bg-zinc-950 text-zinc-100 antialiased" style="font-family: 'Instrument Sans', sans-serif;">
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased" style="font-family: 'Instrument Sans', sans-serif;">
 
     {{-- NAV --}}
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-md">
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-zinc-200/60 dark:border-zinc-800/60 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md">
         <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <a href="/" class="flex items-center gap-2">
                 <div class="flex size-8 items-center justify-center rounded-lg bg-blue-600">
@@ -28,6 +46,28 @@
                 <span class="text-lg font-semibold tracking-tight">TrainTrack</span>
             </a>
             <nav class="flex items-center gap-3">
+                <!-- Theme Toggle -->
+                <button
+                    type="button"
+                    class="flex items-center justify-center size-9 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition hover:bg-zinc-200 dark:hover:bg-zinc-700 dark:hidden"
+                    onclick="localStorage.setItem('theme', 'dark'); document.documentElement.classList.add('dark'); window.location.reload();"
+                    aria-label="Switch to dark mode"
+                >
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    class="hidden dark:flex items-center justify-center size-9 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 transition hover:bg-zinc-700"
+                    onclick="localStorage.setItem('theme', 'light'); document.documentElement.classList.remove('dark'); window.location.reload();"
+                    aria-label="Switch to light mode"
+                >
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                    </svg>
+                </button>
+
                 @auth
                     <a href="{{ route('dashboard') }}"
                        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500">
@@ -35,7 +75,7 @@
                     </a>
                 @else
                     <a href="{{ route('login') }}"
-                       class="text-sm font-medium text-zinc-400 transition hover:text-zinc-100">
+                       class="rounded-lg border-2 border-zinc-900 dark:border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-300 transition hover:bg-zinc-900 hover:text-white dark:hover:bg-zinc-300 dark:hover:text-zinc-900">
                         {{ __('Log in') }}
                     </a>
                     <a href="{{ route('register') }}"
@@ -61,12 +101,12 @@
                     {{ __('Built for real trainers & motivated clients') }}
                 </div>
 
-                <h1 class="mb-6 text-5xl font-bold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
+                <h1 class="mb-6 text-5xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-white sm:text-6xl lg:text-7xl">
                     {{ __('Train smarter.') }}<br>
                     <span class="bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{{ __('Track everything.') }}</span>
                 </h1>
 
-                <p class="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-400">
+                <p class="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
                     {{ __('TrainTrack connects personal trainers with their clients — assign workouts, monitor progress, and keep every session accountable, all in one place.') }}
                 </p>
 
@@ -82,7 +122,7 @@
                             {{ __('Start for free') }}
                         </a>
                         <a href="{{ route('login') }}"
-                           class="rounded-xl border border-zinc-700 px-8 py-3.5 text-base font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white">
+                           class="rounded-xl border-2 border-zinc-900 dark:border-zinc-700 px-8 py-3.5 text-base font-semibold text-zinc-900 dark:text-zinc-300 transition hover:bg-zinc-900 hover:text-white dark:hover:border-zinc-500 dark:hover:text-white">
                             {{ __('Log in') }}
                         </a>
                     @endauth
@@ -141,11 +181,11 @@
         </section>
 
         {{-- HOW IT WORKS --}}
-        <section class="border-t border-zinc-800/60 px-6 py-24">
+        <section class="border-t border-zinc-200 dark:border-zinc-800/60 px-6 py-24">
             <div class="mx-auto max-w-5xl">
                 <div class="mb-16 text-center">
                     <div class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-500">{{ __('How it works') }}</div>
-                    <h2 class="text-3xl font-bold text-white sm:text-4xl">{{ __('Simple for trainers. Motivating for clients.') }}</h2>
+                    <h2 class="text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">{{ __('Simple for trainers. Motivating for clients.') }}</h2>
                 </div>
 
                 <div class="grid gap-8 md:grid-cols-3">
@@ -163,8 +203,8 @@
                             </div>
                             <span class="select-none text-4xl font-bold text-zinc-800">{{ $num }}</span>
                         </div>
-                        <h3 class="text-lg font-semibold text-zinc-100">{{ $title }}</h3>
-                        <p class="leading-relaxed text-zinc-400">{{ $desc }}</p>
+                        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ $title }}</h3>
+                        <p class="leading-relaxed text-zinc-600 dark:text-zinc-400">{{ $desc }}</p>
                     </div>
                     @endforeach
                 </div>
@@ -172,17 +212,17 @@
         </section>
 
         {{-- FEATURES SPLIT --}}
-        <section class="border-t border-zinc-800/60 px-6 py-24">
+        <section class="border-t border-zinc-200 dark:border-zinc-800/60 px-6 py-24">
             <div class="mx-auto max-w-5xl">
                 <div class="mb-16 text-center">
                     <div class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-500">{{ __('Features') }}</div>
-                    <h2 class="text-3xl font-bold text-white sm:text-4xl">{{ __('Everything you need, nothing you don\'t') }}</h2>
+                    <h2 class="text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">{{ __('Everything you need, nothing you don\'t') }}</h2>
                 </div>
 
                 <div class="grid gap-6 md:grid-cols-2">
 
                     {{-- Trainer card --}}
-                    <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-8">
+                    <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-8">
                         <div class="mb-6 flex items-center gap-3">
                             <div class="flex size-10 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-600/20">
                                 <svg class="size-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
@@ -191,7 +231,7 @@
                             </div>
                             <div>
                                 <div class="text-xs font-semibold uppercase tracking-wider text-violet-400">{{ __('For Trainers') }}</div>
-                                <div class="text-lg font-semibold text-zinc-100">{{ __('Coach dashboard') }}</div>
+                                <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ __('Coach dashboard') }}</div>
                             </div>
                         </div>
                         <ul class="flex flex-col gap-3">
@@ -203,7 +243,7 @@
                                 __("See every client's completion percentage at a glance"),
                                 __('7-day upcoming schedule on the dashboard'),
                             ] as $feature)
-                            <li class="flex items-start gap-2.5 text-sm text-zinc-400">
+                            <li class="flex items-start gap-2.5 text-sm text-zinc-600 dark:text-zinc-400">
                                 <svg class="mt-0.5 size-4 shrink-0 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                                 </svg>
@@ -214,7 +254,7 @@
                     </div>
 
                     {{-- Client card --}}
-                    <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-8">
+                    <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-8">
                         <div class="mb-6 flex items-center gap-3">
                             <div class="flex size-10 items-center justify-center rounded-xl border border-green-500/20 bg-green-600/20">
                                 <svg class="size-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
@@ -223,7 +263,7 @@
                             </div>
                             <div>
                                 <div class="text-xs font-semibold uppercase tracking-wider text-green-400">{{ __('For Clients') }}</div>
-                                <div class="text-lg font-semibold text-zinc-100">{{ __('Training view') }}</div>
+                                <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ __('Training view') }}</div>
                             </div>
                         </div>
                         <ul class="flex flex-col gap-3">
@@ -235,7 +275,7 @@
                                 __('Full history of past sessions'),
                                 __('Completion percentage for every workout'),
                             ] as $feature)
-                            <li class="flex items-start gap-2.5 text-sm text-zinc-400">
+                            <li class="flex items-start gap-2.5 text-sm text-zinc-600 dark:text-zinc-400">
                                 <svg class="mt-0.5 size-4 shrink-0 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                                 </svg>
@@ -249,7 +289,7 @@
         </section>
 
         {{-- STATS --}}
-        <section class="border-t border-zinc-800/60 px-6 py-20">
+        <section class="border-t border-zinc-200 dark:border-zinc-800/60 px-6 py-20">
             <div class="mx-auto max-w-4xl">
                 <div class="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
                     @foreach ([
@@ -259,8 +299,8 @@
                         ['0', __('Setup hassle')],
                     ] as [$stat, $label])
                     <div>
-                        <div class="text-3xl font-bold text-white">{{ $stat }}</div>
-                        <div class="mt-1 text-sm text-zinc-500">{{ $label }}</div>
+                        <div class="text-3xl font-bold text-zinc-900 dark:text-white">{{ $stat }}</div>
+                        <div class="mt-1 text-sm text-zinc-600 dark:text-zinc-500">{{ $label }}</div>
                     </div>
                     @endforeach
                 </div>
@@ -268,15 +308,15 @@
         </section>
 
         {{-- CTA --}}
-        <section class="border-t border-zinc-800/60 px-6 py-24">
+        <section class="border-t border-zinc-200 dark:border-zinc-800/60 px-6 py-24">
             <div class="mx-auto max-w-2xl text-center">
                 <div class="mb-10 inline-flex items-center justify-center rounded-full border border-blue-500/20 bg-blue-600/10 p-4">
                     <svg class="size-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
                     </svg>
                 </div>
-                <h2 class="mb-4 text-4xl font-bold text-white">{{ __('Ready to train better?') }}</h2>
-                <p class="mb-10 text-lg text-zinc-400">
+                <h2 class="mb-4 text-4xl font-bold text-zinc-900 dark:text-white">{{ __('Ready to train better?') }}</h2>
+                <p class="mb-10 text-lg text-zinc-600 dark:text-zinc-400">
                     {{ __("Join TrainTrack and bring structure to every session — whether you're the coach or the athlete.") }}
                 </p>
                 @auth
@@ -291,7 +331,7 @@
                             {{ __('Create free account') }}
                         </a>
                         <a href="{{ route('login') }}"
-                           class="rounded-xl border border-zinc-700 px-10 py-4 text-base font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white">
+                           class="rounded-xl border-2 border-zinc-900 dark:border-zinc-700 px-10 py-4 text-base font-semibold text-zinc-900 dark:text-zinc-300 transition hover:bg-zinc-900 hover:text-white dark:hover:border-zinc-500 dark:hover:text-white">
                             {{ __('Log in') }}
                         </a>
                     </div>
@@ -302,15 +342,15 @@
     </main>
 
     {{-- FOOTER --}}
-    <footer class="border-t border-zinc-800/60 px-6 py-8">
-        <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-zinc-600 sm:flex-row">
+    <footer class="border-t border-zinc-200 dark:border-zinc-800/60 px-6 py-8">
+        <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-zinc-500 dark:text-zinc-600 sm:flex-row">
             <div class="flex items-center gap-2">
                 <div class="flex size-5 items-center justify-center rounded bg-blue-600">
                     <svg class="size-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
                     </svg>
                 </div>
-                <span class="font-medium text-zinc-500">TrainTrack</span>
+                <span class="font-medium text-zinc-600 dark:text-zinc-500">TrainTrack</span>
             </div>
             <span>{{ __('Personal training, simplified.') }}</span>
         </div>

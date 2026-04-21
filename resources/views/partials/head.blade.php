@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>
-    {{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}
+    {{ filled($title ?? null) ? $title.' - '.config('app.name', 'TrainTrack') : config('app.name', 'TrainTrack') }}
 </title>
 
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -13,13 +13,12 @@
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
 @if(app()->getLocale() === 'ar')
 <style>
-    html[dir="rtl"] { font-family: 'Tajawal', sans-serif; }
+    html[dir="rtl"] { font-family: 'Cairo', sans-serif; }
     html[dir="rtl"] * { font-family: inherit; }
 </style>
 @endif
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
-@fluxAppearance

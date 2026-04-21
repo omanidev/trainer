@@ -1,7 +1,18 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
     <head>
         @include('partials.head')
+        <script>
+            // Theme management - must run before page renders to prevent flash
+            (function() {
+                const theme = localStorage.getItem('theme') || 'dark';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+        </script>
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
@@ -88,6 +99,24 @@
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                                 {{ __('Settings') }}
+                        </flux:menu.item>
+                        <flux:menu.item
+                            as="button"
+                            type="button"
+                            icon="sun"
+                            class="w-full cursor-pointer dark:hidden"
+                            onclick="localStorage.setItem('theme', 'dark'); document.documentElement.classList.add('dark'); window.location.reload();"
+                        >
+                            {{ __('Dark Mode') }}
+                        </flux:menu.item>
+                        <flux:menu.item
+                            as="button"
+                            type="button"
+                            icon="moon"
+                            class="w-full cursor-pointer hidden dark:block"
+                            onclick="localStorage.setItem('theme', 'light'); document.documentElement.classList.remove('dark'); window.location.reload();"
+                        >
+                            {{ __('Light Mode') }}
                         </flux:menu.item>
                     </flux:menu.radio.group>
 

@@ -22,6 +22,27 @@
             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                 {{ __('Settings') }}
             </flux:menu.item>
+            <flux:menu.item
+                as="button"
+                type="button"
+                icon="sun"
+                class="w-full cursor-pointer dark:hidden"
+                onclick="localStorage.setItem('theme', 'dark'); document.documentElement.classList.add('dark'); window.location.reload();"
+            >
+                {{ __('Dark Mode') }}
+            </flux:menu.item>
+            <flux:menu.item
+                as="button"
+                type="button"
+                icon="moon"
+                class="w-full cursor-pointer hidden dark:block"
+                onclick="localStorage.setItem('theme', 'light'); document.documentElement.classList.remove('dark'); window.location.reload();"
+            >
+                {{ __('Light Mode') }}
+            </flux:menu.item>
+        </flux:menu.radio.group>
+        <flux:menu.separator />
+        <flux:menu.radio.group>
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
                 <flux:menu.item
