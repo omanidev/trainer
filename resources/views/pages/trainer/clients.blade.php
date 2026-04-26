@@ -182,16 +182,16 @@ new #[Layout('layouts.app')] #[Title('My Clients')] class extends Component {
                         })->count();
                 @endphp
 
-                <flux:card class="flex flex-col gap-3">
+                <flux:card class="flex flex-col gap-3 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-blue-300 dark:hover:border-blue-700">
                     <div class="flex items-center gap-3">
                         <flux:avatar :name="$client->name" :initials="$client->initials()" />
                         <div class="flex-1 min-w-0">
-                            <flux:heading class="truncate">{{ $client->name }}</flux:heading>
-                            <flux:text class="truncate text-sm">{{ $client->email }}</flux:text>
+                            <flux:heading class="truncate dark:text-zinc-100">{{ $client->name }}</flux:heading>
+                            <flux:text class="truncate text-sm dark:text-zinc-400">{{ $client->email }}</flux:text>
                         </div>
                     </div>
 
-                    <flux:text class="text-sm text-zinc-500">
+                    <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
                         {{ $total }} {{ $total === 1 ? __('assignment') : __('assignments') }}
                         @if ($total > 0)
                             · {{ $completed }} {{ __('completed') }}
@@ -200,12 +200,14 @@ new #[Layout('layouts.app')] #[Title('My Clients')] class extends Component {
 
                     <div class="flex gap-2 mt-auto">
                         <flux:button size="sm" variant="ghost" icon="eye" tag="a"
-                            :href="route('trainer.client-detail', $client->id)">
+                            :href="route('trainer.client-detail', $client->id)"
+                            class="hover:bg-blue-100 dark:hover:bg-blue-950/50 hover:text-blue-600 dark:hover:text-blue-400">
                             {{ __('View') }}
                         </flux:button>
                         <flux:button size="sm" variant="ghost" icon="trash"
                             wire:click="removeClient({{ $client->id }})"
-                            :wire:confirm="__('Remove :name from your roster?', ['name' => $client->name])">
+                            :wire:confirm="__('Remove :name from your roster?', ['name' => $client->name])"
+                            class="hover:bg-red-100 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400">
                         </flux:button>
                     </div>
                 </flux:card>

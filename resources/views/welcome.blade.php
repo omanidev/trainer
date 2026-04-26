@@ -21,15 +21,40 @@
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
-        // Theme management - must run before page renders to prevent flash
-        (function() {
+        // Apply theme from localStorage
+        function applyTheme() {
             const theme = localStorage.getItem('theme') || 'dark';
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
             }
-        })();
+        }
+
+        // Initialize theme immediately to prevent flash
+        applyTheme();
+
+        // Re-apply theme on Livewire navigation (SPA-style page changes)
+        document.addEventListener('livewire:navigated', function() {
+            applyTheme();
+        });
+
+        // Global theme toggle function
+        window.toggleTheme = function() {
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            localStorage.setItem('theme', newTheme);
+
+            if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // Dispatch custom event for any listeners
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: newTheme } }));
+        };
     </script>
 </head>
 <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased" style="font-family: 'Instrument Sans', sans-serif;">
@@ -50,7 +75,7 @@
                 <button
                     type="button"
                     class="flex items-center justify-center size-9 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition hover:bg-zinc-200 dark:hover:bg-zinc-700 dark:hidden"
-                    onclick="localStorage.setItem('theme', 'dark'); document.documentElement.classList.add('dark'); window.location.reload();"
+                    onclick="window.toggleTheme();"
                     aria-label="Switch to dark mode"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -60,7 +85,7 @@
                 <button
                     type="button"
                     class="hidden dark:flex items-center justify-center size-9 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 transition hover:bg-zinc-700"
-                    onclick="localStorage.setItem('theme', 'light'); document.documentElement.classList.remove('dark'); window.location.reload();"
+                    onclick="window.toggleTheme();"
                     aria-label="Switch to light mode"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

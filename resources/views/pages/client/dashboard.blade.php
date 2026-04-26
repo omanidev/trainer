@@ -86,8 +86,8 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
 
     {{-- Date header --}}
     <div>
-        <flux:heading size="xl">{{ now()->format('l') }}</flux:heading>
-        <flux:text class="text-zinc-500">{{ now()->format('F j, Y') }}</flux:text>
+        <flux:heading size="xl" class="dark:text-zinc-100">{{ now()->format('l') }}</flux:heading>
+        <flux:text class="text-zinc-500 dark:text-zinc-400">{{ now()->format('F j, Y') }}</flux:text>
     </div>
 
     {{-- Today's workouts --}}
@@ -106,7 +106,7 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
 
             {{-- Workout header (always visible, tap to expand) --}}
             <button wire:click="openWorkout({{ $assignment->id }})"
-                class="w-full flex items-center gap-4 px-5 py-4 text-left">
+                class="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors duration-200 rounded-t-2xl">
 
                 {{-- Progress ring --}}
                 <div class="relative shrink-0 size-14">
@@ -124,7 +124,7 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
                     </svg>
                     <div class="absolute inset-0 flex items-center justify-center">
                         @if ($allDone)
-                            <svg class="size-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg class="size-6 text-green-500 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                         @else
@@ -135,21 +135,21 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
 
                 {{-- Info --}}
                 <div class="flex-1 min-w-0">
-                    <div class="font-semibold text-base truncate">{{ $assignment->workoutPlan->name }}</div>
-                    <div class="text-sm text-zinc-500 mt-0.5">
+                    <div class="font-semibold text-base truncate dark:text-zinc-100">{{ $assignment->workoutPlan->name }}</div>
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
                         {{ $done }}/{{ $total }} {{ __('exercises') }}
                         @if ($allDone)
-                            · <span class="text-green-600 font-medium">{{ __('Complete!') }}</span>
+                            · <span class="text-green-600 dark:text-green-400 font-medium">{{ __('Complete!') }}</span>
                         @endif
                     </div>
                     @if ($assignment->notes)
-                        <div class="text-xs text-zinc-400 mt-1 truncate">{{ $assignment->notes }}</div>
+                        <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-1 truncate">{{ $assignment->notes }}</div>
                     @endif
                 </div>
 
                 {{-- Chevron --}}
                 <flux:icon name="{{ $isOpen ? 'chevron-up' : 'chevron-down' }}"
-                    class="size-5 text-zinc-400 shrink-0 transition-transform" />
+                    class="size-5 text-zinc-400 dark:text-zinc-500 shrink-0 transition-transform" />
             </button>
 
             {{-- Exercise list (collapsible) --}}
@@ -303,15 +303,15 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
     @empty
         {{-- Rest day --}}
         <div class="flex flex-col items-center justify-center gap-4 py-20 text-center">
-            <div class="flex size-20 items-center justify-center rounded-3xl bg-zinc-100 dark:bg-zinc-800">
-                <svg class="size-10 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <div class="flex size-20 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50">
+                <svg class="size-10 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636" />
                 </svg>
             </div>
             <div>
-                <flux:heading>{{ __('Rest day') }}</flux:heading>
-                <flux:text class="mt-1 text-zinc-500">{{ __('No workout scheduled for today. Recover well!') }}</flux:text>
+                <flux:heading class="dark:text-zinc-100">{{ __('Rest day') }}</flux:heading>
+                <flux:text class="mt-1 text-zinc-500 dark:text-zinc-400">{{ __('No workout scheduled for today. Recover well!') }}</flux:text>
             </div>
         </div>
     @endforelse
@@ -319,17 +319,17 @@ new #[Layout('layouts.app')] #[Title('My Workout')] class extends Component {
     {{-- Upcoming --}}
     @if ($upcoming->isNotEmpty())
         <div class="flex flex-col gap-3">
-            <flux:heading size="lg">{{ __('Coming Up') }}</flux:heading>
+            <flux:heading size="lg" class="dark:text-zinc-100">{{ __('Coming Up') }}</flux:heading>
             @foreach ($upcoming as $a)
-                <div class="flex items-center gap-4 rounded-xl border border-zinc-200 dark:border-zinc-700 px-4 py-3">
+                <div class="flex items-center gap-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-200">
                     {{-- Day block --}}
                     <div class="flex flex-col items-center justify-center size-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 shrink-0">
-                        <span class="text-xs text-zinc-500 leading-none">{{ $a->scheduled_date->format('D') }}</span>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 leading-none">{{ $a->scheduled_date->format('D') }}</span>
                         <span class="text-lg font-bold text-zinc-800 dark:text-zinc-100 leading-tight">{{ $a->scheduled_date->format('j') }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-medium truncate">{{ $a->workoutPlan->name }}</div>
-                        <div class="text-sm text-zinc-500">{{ $a->scheduled_date->diffForHumans() }}</div>
+                        <div class="font-medium truncate dark:text-zinc-100">{{ $a->workoutPlan->name }}</div>
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $a->scheduled_date->diffForHumans() }}</div>
                     </div>
                 </div>
             @endforeach

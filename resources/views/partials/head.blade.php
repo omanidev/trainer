@@ -22,3 +22,41 @@
 @endif
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+{{-- Global theme management script - runs on every page load --}}
+<script>
+    // Apply theme from localStorage
+    function applyTheme() {
+        const theme = localStorage.getItem('theme') || 'dark';
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    // Initialize theme immediately to prevent flash
+    applyTheme();
+
+    // Re-apply theme on Livewire navigation (SPA-style page changes)
+    document.addEventListener('livewire:navigated', function() {
+        applyTheme();
+    });
+
+    // Global theme toggle function
+    window.toggleTheme = function() {
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        localStorage.setItem('theme', newTheme);
+
+        if (newTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Dispatch custom event for any listeners
+        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: newTheme } }));
+    };
+</script>

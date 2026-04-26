@@ -401,27 +401,29 @@ new #[Layout('layouts.app')] #[Title('Workout Plans')] class extends Component {
     @else
         <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($plans as $plan)
-                <div class="flex flex-col gap-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5">
+                <div class="flex flex-col gap-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30">
 
                     {{-- Plan header --}}
                     <div class="flex items-start justify-between gap-2">
                         <div class="flex-1 min-w-0">
-                            <div class="font-semibold truncate">{{ $plan->name }}</div>
-                            <div class="text-sm text-zinc-500 mt-0.5">
+                            <div class="font-semibold truncate dark:text-zinc-100">{{ $plan->name }}</div>
+                            <div class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
                                 {{ $plan->workout_plan_exercises_count }} {{ $plan->workout_plan_exercises_count === 1 ? __('exercise') : __('exercises') }}
                             </div>
                         </div>
                         <div class="flex gap-1 shrink-0">
                             <flux:button size="sm" variant="ghost" icon="pencil"
-                                wire:click="editPlan({{ $plan->id }})" />
+                                wire:click="editPlan({{ $plan->id }})"
+                                class="hover:bg-blue-100 dark:hover:bg-blue-950/50 hover:text-blue-600 dark:hover:text-blue-400" />
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deletePlan({{ $plan->id }})"
-                                :wire:confirm="__('Delete \':name\'? This will also remove all assignments using it.', ['name' => $plan->name])" />
+                                :wire:confirm="__('Delete \':name\'? This will also remove all assignments using it.', ['name' => $plan->name])"
+                                class="hover:bg-red-100 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400" />
                         </div>
                     </div>
 
                     @if ($plan->notes)
-                        <p class="text-sm text-zinc-500 line-clamp-2 -mt-2">{{ $plan->notes }}</p>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 -mt-2">{{ $plan->notes }}</p>
                     @endif
 
                     {{-- Exercise preview list --}}
@@ -429,9 +431,9 @@ new #[Layout('layouts.app')] #[Title('Workout Plans')] class extends Component {
                         <div class="flex flex-col gap-1.5">
                             @foreach ($plan->workoutPlanExercises->take(4) as $item)
                                 <div class="flex items-center gap-2 text-sm">
-                                    <div class="size-1.5 rounded-full bg-blue-400 shrink-0"></div>
+                                    <div class="size-1.5 rounded-full bg-blue-400 dark:bg-blue-500 shrink-0"></div>
                                     <span class="flex-1 truncate text-zinc-700 dark:text-zinc-300">{{ $item->exercise->name }}</span>
-                                    <span class="text-zinc-400 shrink-0">{{ $item->sets }}×{{ $item->reps }}</span>
+                                    <span class="text-zinc-400 dark:text-zinc-500 shrink-0">{{ $item->sets }}×{{ $item->reps }}</span>
                                 </div>
                             @endforeach
                             @if ($plan->workout_plan_exercises_count > 4)

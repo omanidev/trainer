@@ -27,7 +27,7 @@
                 type="button"
                 icon="sun"
                 class="w-full cursor-pointer dark:hidden"
-                onclick="localStorage.setItem('theme', 'dark'); document.documentElement.classList.add('dark'); window.location.reload();"
+                onclick="window.toggleTheme();"
             >
                 {{ __('Dark Mode') }}
             </flux:menu.item>
@@ -36,7 +36,7 @@
                 type="button"
                 icon="moon"
                 class="w-full cursor-pointer hidden dark:block"
-                onclick="localStorage.setItem('theme', 'light'); document.documentElement.classList.remove('dark'); window.location.reload();"
+                onclick="window.toggleTheme();"
             >
                 {{ __('Light Mode') }}
             </flux:menu.item>
